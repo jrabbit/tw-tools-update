@@ -1,7 +1,8 @@
 package org.brnvrn;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * The tool "Java bean"
@@ -16,9 +17,9 @@ public class Tool {
     private String url;
     private String url_src;
     private String license;
-    private List<String> language = new ArrayList(4);
-    private List<String> author = new ArrayList(4);
-    private List<String> theme = new ArrayList(10);
+    private Set<String> language = new HashSet<>(4);
+    private Set<String> author = new HashSet(4);
+    private Set<String> theme = new HashSet(10);
     private String compatibility;
     private boolean obsolete;
     private String verified;
@@ -28,6 +29,18 @@ public class Tool {
 
     public Tool(boolean isObsolete) {
         obsolete = isObsolete;
+    }
+
+    public void clearLanguage() {
+        language.clear();
+    }
+
+    public void clearAuthor() {
+        author.clear();
+    }
+
+    public void clearTheme() {
+        theme.clear();
     }
 
     public boolean addAuthor(String newAuthor) {
@@ -88,27 +101,27 @@ public class Tool {
         this.license = license;
     }
 
-    public List<String> getLanguage() {
+    public Set<String> getLanguage() {
         return language;
     }
 
-    public void setLanguage(List<String> language) {
+    public void setLanguage(Set<String> language) {
         this.language = language;
     }
 
-    public List<String> getAuthor() {
+    public Set<String> getAuthor() {
         return author;
     }
 
-    public void setAuthor(List<String> author) {
+    public void setAuthor(Set<String> author) {
         this.author = author;
     }
 
-    public List<String> getTheme() {
+    public Set<String> getTheme() {
         return theme;
     }
 
-    public void setTheme(List<String> theme) {
+    public void setTheme(Set<String> theme) {
         this.theme = theme;
     }
 
