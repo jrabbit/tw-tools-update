@@ -24,6 +24,7 @@ public class Tool {
     private boolean obsolete;
     private String verified;
     private String last_update;
+    private boolean nonUniqueName;
 
     public Tool() {};
 
