@@ -7,6 +7,7 @@ This is linked to the project of future Tool page: http://brunovernay.github.io/
 It is a work in progress. The idea is to use the GitHub-API to search project related to TaskWarrior and update the list of tools display on TaskWarrior site from this list.
 
 Project currently in Java, but I may create a Python branch, as it is more idiomatic to this community.
+(https://github.com/sigmavirus24/github3.py might be a good start, there are [many Python projects addressing GitHub](https://developer.github.com/libraries/#python) )
 
 - We still have to set the category manually
 - It only covers GitHub projects currently
