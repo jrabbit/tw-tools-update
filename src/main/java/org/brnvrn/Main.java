@@ -160,12 +160,14 @@ public class Main {
     private static void updateTool(JsonNode node, Tool tool) {
         tool.setDescription(node.get("description").asText());
         tool.setDescriptionText(node.get("description").asText());
-        tool.setUrl(node.get("homepage").asText().isEmpty() ? node.get("html_url").asText() : node.get("homepage").asText());
+        tool.setUrl(node.get("homepage").asText().equals("null") ? node.get("html_url").asText() : node.get("homepage").asText());
         tool.setUrl_src(node.get("html_url").asText());
         tool.clearAuthor();
         tool.addAuthor(node.get("owner").get("login").asText());
-        tool.clearLanguage();
-        tool.addLanguage(node.get("language").asText());
+        if (!node.get("language").asText().equals("null")) {
+            tool.clearLanguage();
+            tool.addLanguage(node.get("language").asText());
+        }
         tool.setLast_update(node.get("updated_at").asText().substring(0, "2015-12-34".length()));
         tool.setVerified(LocalDate.now().toString());
         tool.setObsolete(LocalDate.parse(tool.getLast_update()).isBefore(LocalDate.now().minus(3, YEARS)));
