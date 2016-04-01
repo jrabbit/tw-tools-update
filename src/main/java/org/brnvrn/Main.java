@@ -34,13 +34,16 @@ public class Main {
 
 
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        InputStream dataTools = classloader.getResourceAsStream("data-tools.json");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
+
+        // Read previous Data
+        InputStream dataTools = classloader.getResourceAsStream("data-tools.json");
         List<Tool> tools = mapper.readValue(dataTools, new TypeReference<List<Tool>>() {});
         System.out.println("Loaded " + tools.size() +" old tools.");
 
+        // Loop through the fresh GitHub data to update the previous list
         JsonFactory f = new MappingJsonFactory();
         JsonParser jp = null;
         int nbGithubRequests = 0;
