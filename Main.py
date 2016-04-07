@@ -1,33 +1,29 @@
-from datetime import date, timedelta
+from datetime import date
 from github import Github
 from github.Repository import Repository
 import json
 
 
-# Load previous data
-tools = json.loads(open('data-tools-old.json').read(), encoding='utf-8')
-# print(tools)
-# print(tools[1]['name'])
 
-# Parse Github request to update the data
-gh = Github(per_page=100)
+# LastUpdate would be an update on GitHub repo
+def isObsolete(lastUpdated: str) -> bool:
+    return (date.today() - lastUpdated.date()).days > 3 * 365
 
 
-def updateTool(r, res):
+def updateTool(r: Repository, res):
     res['description'] = r.description
     res['descriptionText'] = r.description
     res['url'] = r.homepage or r.html_url   # Nice syntax!
     res['url_src'] = r.html_url
     # we need other requests for the authors
     res['language'] = [r.language]
-    res['last_update'] = r.updated_at[:-10]
+    res['last_update'] = r.updated_at.isoformat()
     res['verified'] = date.today().isoformat()
-    res['obsolete'] = timedelta(years=3) < date(r.updated_at) - date.today()
+    res['obsolete'] = isObsolete(r.updated_at)
 
 
 def parseBatchOfGithubResults(r, tools):
     # Is current result already in the tools?
-    print('Parsing ' + r.name)
     matchesNumb = 0
     matches = filter(lambda x: r.name == x['name'], tools)
     for res in matches:
@@ -44,6 +40,17 @@ def parseBatchOfGithubResults(r, tools):
     else:
         return True
 
+
+# Load previous data
+tools = json.loads(open('data-tools-old.json').read(), encoding='utf-8')
+# print(tools)
+# print(tools[1]['name'])
+
+# Parse Github request to update the data
+gh = Github(per_page=100)
+
+
+# Main program loop
 i = 0
 for r in gh.search_repositories("taskwarrior"):
     assert isinstance(r, Repository)
