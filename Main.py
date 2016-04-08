@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from github import Github
 from github.Repository import Repository
 import json
@@ -6,7 +6,7 @@ import json
 
 
 # LastUpdate would be an update on GitHub repo
-def isObsolete(lastUpdated: str) -> bool:
+def isObsolete(lastUpdated: datetime) -> bool:
     return (date.today() - lastUpdated.date()).days > 3 * 365
 
 
@@ -22,23 +22,35 @@ def updateTool(r: Repository, res):
     res['obsolete'] = isObsolete(r.updated_at)
 
 
-def parseBatchOfGithubResults(r, tools):
+def isToolUpdate(r: Repository, tools: list) -> bool:
     # Is current result already in the tools?
-    matchesNumb = 0
+    potential_matches = 0
+    good_matches = 0
     matches = filter(lambda x: r.name == x['name'], tools)
     for res in matches:
         print(res)
-        print("Warning: Please check possible duplicates in previous data !")
-        if res['url_src'] == r.html_url:
-            matchesNumb += 1
-            if matchesNumb > 1:
+        potential_matches += 1
+        if res['url_src'] or res['url'] == r.html_url:
+            good_matches += 1
+            if good_matches > 1:
                 print("Error: at least 2 projects have the same name and URL in previous data: "+ r.name +" !")
             updateTool(r, res)
-    if matchesNumb == 0:
-        print("(Warning: Please check duplicates !  May be on GitHub, but the source URL does not link to GitHub.) ")
+            print('  Updated')
+    if good_matches == 0:
+        if potential_matches > 0:
+            print("(Warning: Please check duplicates !  May be on GitHub, but the source URL does not link to GitHub.) ")
         return False
     else:
+        if potential_matches > 1:
+            print("Warning: Please check possible duplicates in previous data !")
         return True
+
+
+def addTools(r: Repository, tools):
+    newTool = {'name': r.name, 'category': "Unknown"}
+    updateTool(r, newTool)
+    tools.append(newTool)
+    pass
 
 
 # Load previous data
@@ -52,11 +64,16 @@ gh = Github(per_page=100)
 
 # Main program loop
 i = 0
+
+
+
 for r in gh.search_repositories("taskwarrior"):
     assert isinstance(r, Repository)
     i += 1
     print(i, "Name " + r.name)
-    parseBatchOfGithubResults(r, tools)
+    if not isToolUpdate(r, tools):
+        addTools(r, tools)
+        print("  Added")
 
 # Write the updated data
 with open('data-tools.json', mode='w', encoding='utf-8') as f:
