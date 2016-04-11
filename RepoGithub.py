@@ -10,9 +10,6 @@ from Tool import isObsolete
 # http://pygithub.github.io/PyGithub/v1/index.html
 # Maybe gh.load( file ) could allow to load an existing search into the Github object?
 
-# Had to use a function just to get the right type. Otherwise, no auto-completion.
-def getUserName(r: Repository) -> NamedUser:
-    return r.owner
 
 # Parse Github request to update the data
 def updateTool(r: Repository, res):
@@ -20,8 +17,12 @@ def updateTool(r: Repository, res):
     res['descriptionText'] = r.description
     res['url'] = r.homepage or r.html_url   # Nice syntax!
     res['url_src'] = r.html_url
-    res['author'] = [getUserName(r).name + ' (' + r.owner + ')']
-    # we need other requests for the authors
+    res['author'] = []
+    for contributor in r.get_contributors():
+        if contributor.name:
+            res['author'].append(contributor.name + ' (' + contributor.login + ')')
+        else:
+            res['author'].append(contributor.login)
     res['language'] = [r.language]
     res['last_update'] = r.updated_at.isoformat()
     res['verified'] = date.today().isoformat()
@@ -67,7 +68,7 @@ def addTools(r: Repository, tools):
 #  Use https://github.com/settings/tokens
 def scanGithubRepo(tools: list):
     i = 0
-    gh = Github(login_or_token='ed372a1f41d3f1e7654dae3a21555e710c04455c', per_page=100)
+    gh = Github(login_or_token='', per_page=100)
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
