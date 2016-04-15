@@ -10,6 +10,8 @@ Project currently works in Java, but I created a Python branch, as it is more id
 (https://github.com/PyGithub/PyGithub might be a good start, there are [many Python projects addressing GitHub](https://developer.github.com/libraries/#python), even a book [Mining the Social Web](https://www.safaribooksonline.com/library/view/mining-the-social/9781449368180/) )
 
 - We still have to set the category manually
+- Does not seem to be a way to get the license
+- You have to enter your GitHub token given the number of required requests. (https://github.com/settings/tokens)
 - It only covers GitHub projects currently
 - We might apply a diff after the update, to keep manual changes
 - We might apply a filter before, to exclude this very project for example :-)
