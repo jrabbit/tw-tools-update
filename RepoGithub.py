@@ -1,7 +1,6 @@
 import json
 from datetime import date
 from github import Github
-from github.NamedUser import NamedUser
 from github.Repository import Repository
 
 from Tool import isObsolete
@@ -24,7 +23,7 @@ def updateTool(r: Repository, res):
         else:
             res['author'].append(contributor.login)
     res['language'] = [r.language]
-    res['last_update'] = r.updated_at.isoformat()
+    res['last_update'] = r.updated_at.date().isoformat()
     res['verified'] = date.today().isoformat()
     res['obsolete'] = isObsolete(r.updated_at)
 
