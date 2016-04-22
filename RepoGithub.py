@@ -22,7 +22,7 @@ def updateTool(r: Repository, res):
             res['author'].append(contributor.name + ' (' + contributor.login + ')')
         else:
             res['author'].append(contributor.login)
-    res['language'] = [r.language]
+    res['language'] = [r.language] if r.language is not None else []
     res['last_update'] = r.updated_at.date().isoformat()
     res['verified'] = date.today().isoformat()
     res['obsolete'] = isObsolete(r.updated_at)
@@ -67,7 +67,7 @@ def addTools(r: Repository, tools):
 #  Use https://github.com/settings/tokens
 def scanGithubRepo(tools: list):
     i = 0
-    gh = Github(login_or_token='', per_page=100)
+    gh = Github(login_or_token='e9240b09797541aa41e89145078d7ef1ac2abea4', per_page=100)
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
