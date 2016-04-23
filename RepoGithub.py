@@ -3,7 +3,8 @@ from datetime import date
 from github import Github
 from github.Repository import Repository
 
-from Tool import isObsolete
+from Tool import isObsolete, bestEffortTheme
+
 
 #
 # http://pygithub.github.io/PyGithub/v1/index.html
@@ -26,6 +27,7 @@ def updateTool(r: Repository, res):
     res['last_update'] = r.updated_at.date().isoformat()
     res['verified'] = date.today().isoformat()
     res['obsolete'] = isObsolete(r.updated_at)
+    bestEffortTheme(res)
 
 
 def isToolUpdate(r: Repository, tools: list) -> bool:
@@ -53,7 +55,7 @@ def isToolUpdate(r: Repository, tools: list) -> bool:
 
 
 def addTools(r: Repository, tools):
-    newTool = {'name': r.name, 'category': "Unknown"}
+    newTool = {'name': r.name, 'category': "Unknown", 'compatibility': "2.4.1+"}
     updateTool(r, newTool)
     tools.append(newTool)
     print(json.dumps(newTool, indent=2))
@@ -67,7 +69,7 @@ def addTools(r: Repository, tools):
 #  Use https://github.com/settings/tokens
 def scanGithubRepo(tools: list):
     i = 0
-    gh = Github(login_or_token='e9240b09797541aa41e89145078d7ef1ac2abea4', per_page=100)
+    gh = Github(login_or_token='', per_page=100)
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
