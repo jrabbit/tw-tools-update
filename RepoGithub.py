@@ -24,6 +24,7 @@ def updateTool(r: Repository, res):
         else:
             res['author'].append(contributor.login)
     res['language'] = [r.language] if r.language is not None else []
+    # LastUpdate would be an update on GitHub repo
     res['last_update'] = r.updated_at.date().isoformat()
     res['verified'] = date.today().isoformat()
     res['obsolete'] = isObsolete(r.updated_at)
@@ -65,11 +66,9 @@ def addTools(r: Repository, tools):
 
 
 # Main program loop
-# You really have to provide your token here, because 60 requests per hours won't cut it
-#  Use https://github.com/settings/tokens
-def scanGithubRepo(tools: list):
+def scanGithubRepo(tools: list, github_token: str):
     i = 0
-    gh = Github(login_or_token='', per_page=100)
+    gh = Github(login_or_token=github_token, per_page=100)
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
