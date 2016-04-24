@@ -1,6 +1,9 @@
 from datetime import datetime, date
 
 
+def newTool(name: str):
+    return {'name': name, 'category': "Unknown", 'compatibility': "2.4.1+"}
+
 def isObsolete(lastUpdated: datetime) -> bool:
     return (date.today() - lastUpdated.date()).days > 3 * 365
 

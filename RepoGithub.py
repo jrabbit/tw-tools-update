@@ -2,13 +2,19 @@ import json
 from datetime import date
 from github import Github
 from github.Repository import Repository
+from github.ContentFile import ContentFile
+import re
 
+import Tool
 from Tool import isObsolete, bestEffortTheme
 
 
 #
 # http://pygithub.github.io/PyGithub/v1/index.html
 # Maybe gh.load( file ) could allow to load an existing search into the Github object?
+
+# Looks like GitHub provides License information: https://developer.github.com/v3/licenses/#get-a-repositorys-license
+# But the Python library is not able to get it. Wait and see ...
 
 
 # Parse Github request to update the data
@@ -23,6 +29,12 @@ def updateTool(r: Repository, res):
             res['author'].append(contributor.name + ' (' + contributor.login + ')')
         else:
             res['author'].append(contributor.login)
+    # Get the readme for future use ...
+    rx = re.compile('\W+')
+    try:
+        res['readme'] = rx.sub(' ',  r.get_readme().decoded_content.decode('utf-8')).strip()
+    except:
+        print('Could not get Readme.')
     res['language'] = [r.language] if r.language is not None else []
     # LastUpdate would be an update on GitHub repo
     res['last_update'] = r.updated_at.date().isoformat()
@@ -56,7 +68,7 @@ def isToolUpdate(r: Repository, tools: list) -> bool:
 
 
 def addTools(r: Repository, tools):
-    newTool = {'name': r.name, 'category': "Unknown", 'compatibility': "2.4.1+"}
+    newTool = Tool.newTool(r.name)
     updateTool(r, newTool)
     tools.append(newTool)
     print(json.dumps(newTool, indent=2))
