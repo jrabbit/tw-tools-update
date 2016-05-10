@@ -44,7 +44,7 @@ The mapping:
 
 ## Automatic classification
 
-I get all the "Readme" in order to perform some Machine Learning. The first idea would be to classify by category. The Python library seems to be SciKit. There is a more active NLTK library, but since I only need simple text feature extraction and no complex Natural Language processing, I will stick to SciKit. 
+I get all the "Readme" in order to perform some Machine Learning. The first idea would be to classify by category. The Python library seems to be SciKit. There is a more active [NLTK](http://www.nltk.org/) library, but since I only need simple text feature extraction and no complex Natural Language processing, I will stick to SciKit. 
 Some ref:
  - http://scikit-learn.org/stable/modules/feature_extraction.html
  - http://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
