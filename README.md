@@ -9,11 +9,26 @@ This is linked to the project of future Tool page: http://brunovernay.github.io/
 
 The idea is to use the GitHub-API to search project related to TaskWarrior and update the list of tools displayed on TaskWarrior site from this list.
 
-The project started in Java, but I created a Python branch, as it is more idiomatic to the TaskWarrior community.
+The project started in Java, but I created a Python branch, as it is more idiomatic to the TaskWarrior community. It should be compatible with Python v2 & v3.
 
 I use https://github.com/PyGithub/PyGithub , there are [many Python projects addressing GitHub](https://developer.github.com/libraries/#python), even a book [Mining the Social Web](https://www.safaribooksonline.com/library/view/mining-the-social/9781449368180/) .
 
+
+## Usage
+
+- `cp Config.py.example Config.py` and edit `Config.py` with your GitHub token
+- old tool list is in `data-tools-old.json`
+- `python3 Main.py > log-$(date -Iminutes).txt` (takes about 5 min)
+- New data is in `data-tools.json`
+
+## Usage
+
+`python3 Main.py > log-$(date -Iminutes).txt`
+## Usage
+
+`python3 Main.py > log-$(date -Iminutes).txt`
 ## Status
+
 
 - It works
 - We still have to set the category manually
@@ -21,7 +36,6 @@ I use https://github.com/PyGithub/PyGithub , there are [many Python projects add
 - You have to enter your GitHub token given the number of required requests. (https://github.com/settings/tokens)
 - It only covers GitHub projects currently (BitBucket maybe one day ...)
 - We might apply a diff after the update, to keep manual changes
-- We might apply a filter before, to exclude this very project for example :-)
 
 
 Note:

@@ -1,6 +1,6 @@
 import json
 import Config
-from RepoGithub import scanGithubRepo
+from RepoGithub import scan_github_repo
 
 # Load previous data
 tools = json.loads(open('data-tools-old.json').read(), encoding='utf-8')
@@ -8,7 +8,7 @@ tools = json.loads(open('data-tools-old.json').read(), encoding='utf-8')
 # print(tools[1]['name'])
 
 
-scanGithubRepo(tools, Config.GitHubToken)
+scan_github_repo(tools, Config.GitHubToken)
 # Should scan BitBucket repo ...
 # other repo ...
 

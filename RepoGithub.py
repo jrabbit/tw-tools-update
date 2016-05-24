@@ -5,8 +5,8 @@ from github.Repository import Repository
 import re
 
 import Tool
-from SkipTheseTools import skip_these_tools
-from Tool import isObsolete, bestEffortTheme
+from SkipTheseTools import skip_these_tool
+from Tool import is_obsolete, best_effort_theme
 
 
 #
@@ -17,45 +17,55 @@ from Tool import isObsolete, bestEffortTheme
 # But the Python library is not able to get it. Wait and see ...
 
 
-# Parse Github request to update the data
-def updateTool(r: Repository, res):
-    res['description'] = r.description
-    res['descriptionText'] = r.description
-    res['url'] = r.homepage or r.html_url   # Nice syntax!
-    res['url_src'] = r.html_url
-    res['author'] = []
-    for contributor in r.get_contributors():
+def update_tool(new_tool, old_tool):
+    """
+    Parse Github request to update the data
+    :param new_tool: from the GitHub repository
+    :param old_tool:
+    """
+    old_tool['description'] = new_tool.description
+    old_tool['descriptionText'] = new_tool.description
+    old_tool['url'] = new_tool.homepage or new_tool.html_url   # Nice syntax!
+    old_tool['url_src'] = new_tool.html_url
+    old_tool['author'] = []
+    for contributor in new_tool.get_contributors():
         if contributor.name:
-            res['author'].append(contributor.name + ' (' + contributor.login + ')')
+            old_tool['author'].append(contributor.name + ' (' + contributor.login + ')')
         else:
-            res['author'].append(contributor.login)
+            old_tool['author'].append(contributor.login)
     # Get the readme for future use ...
     rx = re.compile('\W+')
     try:
-        res['readme'] = rx.sub(' ',  r.get_readme().decoded_content.decode('utf-8')).strip()
+        old_tool['readme'] = rx.sub(' ', new_tool.get_readme().decoded_content.decode('utf-8')).strip()
     except:
         print('Could not get Readme.')
-    res['language'] = [r.language] if r.language is not None else []
+    old_tool['language'] = [new_tool.language] if new_tool.language is not None else []
     # LastUpdate would be an update on GitHub repo
-    res['last_update'] = r.updated_at.date().isoformat()
-    res['verified'] = date.today().isoformat()
-    res['obsolete'] = isObsolete(r.updated_at)
-    bestEffortTheme(res)
+    old_tool['last_update'] = new_tool.updated_at.date().isoformat()
+    old_tool['verified'] = date.today().isoformat()
+    old_tool['obsolete'] = is_obsolete(new_tool.updated_at)
+    best_effort_theme(old_tool)
 
 
-def isToolUpdate(r: Repository, tools: list) -> bool:
-    # Is current result already in the tools?
+def is_tool_update(new_tool, old_tools):
+    """
+    Is current result already in the tools?
+    :param new_tool: tool from the repository
+    :param old_tools: old tool list
+    :return:
+    :rtype: bool
+    """
     potential_matches = 0
     good_matches = 0
-    existing_matches = filter(lambda x: r.name == x['name'], tools)
+    existing_matches = filter(lambda x: new_tool.name == x['name'], old_tools)
     for existing_tool in existing_matches:
         print(existing_tool)
         potential_matches += 1
-        if (existing_tool['url_src'] == r.html_url) or (existing_tool['url'] == r.html_url):
+        if (existing_tool['url_src'] == new_tool.html_url) or (existing_tool['url'] == new_tool.html_url):
             good_matches += 1
             if good_matches > 1:
-                print("Error: at least 2 projects have the same name and URL in previous data: "+ r.name +" !")
-            updateTool(r, existing_tool)
+                print("Error: at least 2 projects have the same name and URL in previous data: " + new_tool.name + " !")
+            update_tool(new_tool, existing_tool)
             print('  Updated')
     if good_matches == 0:
         if potential_matches > 0:
@@ -67,25 +77,31 @@ def isToolUpdate(r: Repository, tools: list) -> bool:
         return True
 
 
-def addTools(r: Repository, tools):
-    newTool = Tool.newTool(r.name)
-    updateTool(r, newTool)
-    tools.append(newTool)
-    print(json.dumps(newTool, indent=2))
+def add_tool(new_tool, old_tools):
+    """
+
+    :param new_tool: tool from the repository
+    :param old_tools: old tool list
+    """
+    t = Tool.new_tool(new_tool.name)
+    update_tool(new_tool, t)
+    old_tools.append(t)
+    print(json.dumps(t, indent=2))
     pass
 
 
-
-
-# Main program loop
-def scanGithubRepo(tools: list, github_token: str):
+def scan_github_repo(tools: list, github_token: str):
+    """
+    Main program loop
+    :param tools: old tool list
+    :param github_token: See GitHub doc.
+    """
     i = 0
     gh = Github(login_or_token=github_token, per_page=100)
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
         print(i, "Name " + r.name + " " + r.html_url)
-        if not skip_these_tools(r.html_url):
-            if not isToolUpdate(r, tools):
-                addTools(r, tools)
-                print("  Added")
+        if not skip_these_tool(r.html_url) and not is_tool_update(r, tools):
+            add_tool(r, tools)
+            print("  Added")
