@@ -2,10 +2,10 @@ import json
 from datetime import date
 from github import Github
 from github.Repository import Repository
-from github.ContentFile import ContentFile
 import re
 
 import Tool
+from SkipTheseTools import skip_these_tools
 from Tool import isObsolete, bestEffortTheme
 
 
@@ -47,15 +47,15 @@ def isToolUpdate(r: Repository, tools: list) -> bool:
     # Is current result already in the tools?
     potential_matches = 0
     good_matches = 0
-    matches = filter(lambda x: r.name == x['name'], tools)
-    for res in matches:
-        print(res)
+    existing_matches = filter(lambda x: r.name == x['name'], tools)
+    for existing_tool in existing_matches:
+        print(existing_tool)
         potential_matches += 1
-        if res['url_src'] or res['url'] == r.html_url:
+        if (existing_tool['url_src'] == r.html_url) or (existing_tool['url'] == r.html_url):
             good_matches += 1
             if good_matches > 1:
                 print("Error: at least 2 projects have the same name and URL in previous data: "+ r.name +" !")
-            updateTool(r, res)
+            updateTool(r, existing_tool)
             print('  Updated')
     if good_matches == 0:
         if potential_matches > 0:
@@ -84,7 +84,8 @@ def scanGithubRepo(tools: list, github_token: str):
     for r in gh.search_repositories("taskwarrior"):
         assert isinstance(r, Repository)
         i += 1
-        print(i, "Name " + r.name)
-        if not isToolUpdate(r, tools):
-            addTools(r, tools)
-            print("  Added")
+        print(i, "Name " + r.name + " " + r.html_url)
+        if not skip_these_tools(r.html_url):
+            if not isToolUpdate(r, tools):
+                addTools(r, tools)
+                print("  Added")
