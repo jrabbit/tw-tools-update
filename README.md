@@ -9,7 +9,7 @@ This is linked to the project of future Tool page: http://brunovernay.github.io/
 
 The idea is to use the GitHub-API to search project related to TaskWarrior and update the list of tools displayed on TaskWarrior site from this list.
 
-The project started in Java, but I created a Python branch, as it is more idiomatic to the TaskWarrior community. It should be compatible with Python v2 & v3.
+The project started in Java, but I created a Python branch, as it is more idiomatic to the TaskWarrior community. It should be compatible with Python v2 & v3 (http://pythonclock.org/).
 
 I use https://github.com/PyGithub/PyGithub , there are [many Python projects addressing GitHub](https://developer.github.com/libraries/#python), even a book [Mining the Social Web](https://www.safaribooksonline.com/library/view/mining-the-social/9781449368180/) .
 
