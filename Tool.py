@@ -1,7 +1,7 @@
 from datetime import datetime, date
 
 
-def new_tool(name: str):
+def new_tool(name):
     """
     Create a new tool structure, with some pre-filled fields
     :param name:  the tool name

@@ -90,7 +90,7 @@ def add_tool(new_tool, old_tools):
     pass
 
 
-def scan_github_repo(tools: list, github_token: str):
+def scan_github_repo(tools, github_token):
     """
     Main program loop
     :param tools: old tool list
