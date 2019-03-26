@@ -1,9 +1,0 @@
-#
-# Get your tokens and rename this file "Config.py"
-# Do NOT commit this file with your tokens! (Config.py is in the .gitignore)
-
-# You really have to provide your token here, because 60 requests per hours won't cut it
-#  Use https://github.com/settings/tokens
-GitHubToken = ''
-
-# BitBucket ...

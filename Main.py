@@ -1,14 +1,22 @@
 import json
-import Config
+import logging
+
+import toml
+
 from RepoGithub import scan_github_repo
 
+logger = logging.getLogger(__name__)
+
 # Load previous data
-tools = json.loads(open('data-tools-old.json').read(), encoding='utf-8')
-# print(tools)
-# print(tools[1]['name'])
+with open('data-tools-old.json') as f:
+    tools = json.load(f)
 
 
-scan_github_repo(tools, Config.GitHubToken)
+config = toml.load("config.toml")
+
+gh_token = config["github"]["token"]
+
+scan_github_repo(tools, gh_token)
 # Should scan BitBucket repo ...
 # other repo ...
 
@@ -24,8 +32,8 @@ with open('data-tools-full.json', mode='w', encoding='utf-8') as f:
 def remove_useless_keys(tool):
     try:
         del tool['readme']
-    except:
-        pass
+    except Exception as e:
+        logger.exception(e)
     return tool
 
 tools = list(map(remove_useless_keys, tools))

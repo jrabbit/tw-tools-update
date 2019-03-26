@@ -1,13 +1,17 @@
 import json
 from datetime import date
+import logging
+import re
+
 from github import Github
 from github.Repository import Repository
-import re
 
 import Tool
 from SkipTheseTools import skip_these_tool
 from Tool import is_obsolete, best_effort_theme
 
+
+logger = logging.getLogger(__name__)
 
 #
 # http://pygithub.github.io/PyGithub/v1/index.html
@@ -92,7 +96,6 @@ def add_tool(new_tool, old_tools):
     update_tool(new_tool, t)
     old_tools.append(t)
     print(json.dumps(t, indent=2))
-    pass
 
 
 def scan_github_repo(tools, github_token):
