@@ -37,7 +37,7 @@ def update_tool(new_tool, old_tool):
         else:
             old_tool['author'].append(contributor.login)
     # Get the readme for future use ...
-    rx = re.compile('\W+')
+    rx = re.compile(r'\W+')
     try:
         old_tool['readme'] = rx.sub(' ', new_tool.get_readme().decoded_content.decode('utf-8')).strip()
     except:
