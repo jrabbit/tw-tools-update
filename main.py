@@ -32,6 +32,9 @@ with open("data-tools-full.json", mode="w", encoding="utf-8") as f:
 def remove_useless_keys(tool):
     try:
         del tool["readme"]
+    except KeyError:
+        # supress
+        pass
     except Exception as e:
         logger.exception(e)
     return tool
