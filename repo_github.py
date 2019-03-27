@@ -43,11 +43,7 @@ def update_tool(new_tool, old_tool):
     except:
         print('Could not get Readme.')
     old_tool['language'] = [new_tool.language] if new_tool.language is not None else []
-    # Get a list of people who have bookmarked the repo.
-    # Since you'll get a lazy iterator back, you have to traverse
-    # it if you want to get the total number of stargazers.
-    stargazers = [s for s in new_tool.get_stargazers()]
-    old_tool['stars'] = len(stargazers)
+    old_tool['stars'] = new_tool.stargazers_count
     # LastUpdate would be an update on GitHub repo
     old_tool['last_update'] = new_tool.updated_at.date().isoformat()
     old_tool['verified'] = date.today().isoformat()
