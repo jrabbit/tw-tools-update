@@ -6,10 +6,9 @@ import re
 from github import Github
 from github.Repository import Repository
 
-import Tool
-from SkipTheseTools import skip_these_tool
-from Tool import is_obsolete, best_effort_theme
-
+import tool
+from skip_these_tools import skip_these_tool
+from tool import is_obsolete, best_effort_theme
 
 logger = logging.getLogger(__name__)
 
@@ -92,7 +91,7 @@ def add_tool(new_tool, old_tools):
     :param new_tool: tool from the repository
     :param old_tools: old tool list
     """
-    t = Tool.new_tool(new_tool.name)
+    t = tool.new_tool(new_tool.name)
     update_tool(new_tool, t)
     old_tools.append(t)
     print(json.dumps(t, indent=2))
@@ -104,11 +103,9 @@ def scan_github_repo(tools, github_token):
     :param tools: old tool list
     :param github_token: See GitHub doc.
     """
-    i = 0
     gh = Github(login_or_token=github_token, per_page=100)
-    for r in gh.search_repositories("taskwarrior"):
+    for i, r in enumerate(gh.search_repositories("taskwarrior"), 1):
         assert isinstance(r, Repository)
-        i += 1
         print(i, "Name " + r.name + " " + r.html_url)
         if not skip_these_tool(r.html_url) and not is_tool_update(r, tools):
             add_tool(r, tools)

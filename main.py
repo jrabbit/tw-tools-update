@@ -3,7 +3,7 @@ import logging
 
 import toml
 
-from RepoGithub import scan_github_repo
+from repo_github import scan_github_repo
 
 logger = logging.getLogger(__name__)
 
