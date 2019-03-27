@@ -10,7 +10,7 @@ def new_tool(name):
     return {"name": name, "category": "Unknown", "compatibility": "2.4.1+"}
 
 
-def is_obsolete(last_updated):
+def is_obsolete(last_updated: datetime) -> bool:
     """
     The obsolescence is after 3 years
     :param last_updated: datetime

@@ -7,6 +7,7 @@ from repo_github import scan_github_repo
 
 logger = logging.getLogger(__name__)
 
+logging.basicConfig(level=logging.INFO)
 # Load previous data
 with open("data-tools-old.json") as f:
     tools = json.load(f)

@@ -4,17 +4,12 @@ import logging
 import re
 
 from github import Github
-from github.Repository import Repository
 
 import tool
 from skip_these_tools import skip_these_tool
 from tool import is_obsolete, best_effort_theme
 
 logger = logging.getLogger(__name__)
-
-#
-# http://pygithub.github.io/PyGithub/v1/index.html
-# Maybe gh.load( file ) could allow to load an existing search into the Github object?
 
 # Looks like GitHub provides License information: https://developer.github.com/v3/licenses/#get-a-repositorys-license
 # But the Python library is not able to get it. Wait and see ...
@@ -43,7 +38,7 @@ def update_tool(new_tool, old_tool):
             " ", new_tool.get_readme().decoded_content.decode("utf-8")
         ).strip()
     except:
-        print("Could not get Readme.")
+        logger.debug("Could not get Readme.")
     old_tool["language"] = [new_tool.language] if new_tool.language is not None else []
     old_tool["stars"] = new_tool.stargazers_count
     # LastUpdate would be an update on GitHub repo
@@ -65,29 +60,29 @@ def is_tool_update(new_tool, old_tools):
     good_matches = 0
     existing_matches = filter(lambda x: new_tool.name == x["name"], old_tools)
     for existing_tool in existing_matches:
-        print(existing_tool)
+        logger.debug(existing_tool)
         potential_matches += 1
         if (existing_tool["url_src"] == new_tool.html_url) or (
             existing_tool["url"] == new_tool.html_url
         ):
             good_matches += 1
             if good_matches > 1:
-                print(
+                logger.warning(
                     "Error: at least 2 projects have the same name and URL in previous data: "
                     + new_tool.name
                     + " !"
                 )
             update_tool(new_tool, existing_tool)
-            print("  Updated")
+            logger.debug("  Updated")
     if good_matches == 0:
         if potential_matches > 0:
-            print(
+            logger.warning(
                 "(Warning: Please check duplicates !  May be on GitHub, but the source URL does not link to GitHub.) "
             )
         return False
     else:
         if potential_matches > 1:
-            print("Warning: Please check possible duplicates in previous data !")
+            logger.warning("Warning: Please check possible duplicates in previous data !")
         return True
 
 
@@ -100,7 +95,9 @@ def add_tool(new_tool, old_tools):
     t = tool.new_tool(new_tool.name)
     update_tool(new_tool, t)
     old_tools.append(t)
-    print(json.dumps(t, indent=2))
+    if logger.isEnabledFor(logging.DEBUG):
+        # json dumps are slow don't do them if not in debug mode
+        logger.debug(json.dumps(t, indent=2))
 
 
 def scan_github_repo(tools, github_token):
@@ -111,8 +108,8 @@ def scan_github_repo(tools, github_token):
     """
     gh = Github(login_or_token=github_token, per_page=100)
     for i, r in enumerate(gh.search_repositories("taskwarrior"), 1):
-        assert isinstance(r, Repository)
-        print(i, "Name " + r.name + " " + r.html_url)
+        # assert isinstance(r, Repository)
+        logger.info("#%d, Name: %s %s", i, r.name, r.html_url)
         if not skip_these_tool(r.html_url) and not is_tool_update(r, tools):
             add_tool(r, tools)
-            print("  Added")
+            logger.info("%s  Added", r.name)
