@@ -26,28 +26,30 @@ def update_tool(new_tool, old_tool):
     :param new_tool: from the GitHub repository
     :param old_tool:
     """
-    old_tool['description'] = new_tool.description
-    old_tool['descriptionText'] = new_tool.description
-    old_tool['url'] = new_tool.homepage or new_tool.html_url   # Nice syntax!
-    old_tool['url_src'] = new_tool.html_url
-    old_tool['author'] = []
+    old_tool["description"] = new_tool.description
+    old_tool["descriptionText"] = new_tool.description
+    old_tool["url"] = new_tool.homepage or new_tool.html_url  # Nice syntax!
+    old_tool["url_src"] = new_tool.html_url
+    old_tool["author"] = []
     for contributor in new_tool.get_contributors():
         if contributor.name:
-            old_tool['author'].append(contributor.name + ' (' + contributor.login + ')')
+            old_tool["author"].append(contributor.name + " (" + contributor.login + ")")
         else:
-            old_tool['author'].append(contributor.login)
+            old_tool["author"].append(contributor.login)
     # Get the readme for future use ...
-    rx = re.compile(r'\W+')
+    rx = re.compile(r"\W+")
     try:
-        old_tool['readme'] = rx.sub(' ', new_tool.get_readme().decoded_content.decode('utf-8')).strip()
+        old_tool["readme"] = rx.sub(
+            " ", new_tool.get_readme().decoded_content.decode("utf-8")
+        ).strip()
     except:
-        print('Could not get Readme.')
-    old_tool['language'] = [new_tool.language] if new_tool.language is not None else []
-    old_tool['stars'] = new_tool.stargazers_count
+        print("Could not get Readme.")
+    old_tool["language"] = [new_tool.language] if new_tool.language is not None else []
+    old_tool["stars"] = new_tool.stargazers_count
     # LastUpdate would be an update on GitHub repo
-    old_tool['last_update'] = new_tool.updated_at.date().isoformat()
-    old_tool['verified'] = date.today().isoformat()
-    old_tool['obsolete'] = is_obsolete(new_tool.updated_at)
+    old_tool["last_update"] = new_tool.updated_at.date().isoformat()
+    old_tool["verified"] = date.today().isoformat()
+    old_tool["obsolete"] = is_obsolete(new_tool.updated_at)
     best_effort_theme(old_tool)
 
 
@@ -61,19 +63,27 @@ def is_tool_update(new_tool, old_tools):
     """
     potential_matches = 0
     good_matches = 0
-    existing_matches = filter(lambda x: new_tool.name == x['name'], old_tools)
+    existing_matches = filter(lambda x: new_tool.name == x["name"], old_tools)
     for existing_tool in existing_matches:
         print(existing_tool)
         potential_matches += 1
-        if (existing_tool['url_src'] == new_tool.html_url) or (existing_tool['url'] == new_tool.html_url):
+        if (existing_tool["url_src"] == new_tool.html_url) or (
+            existing_tool["url"] == new_tool.html_url
+        ):
             good_matches += 1
             if good_matches > 1:
-                print("Error: at least 2 projects have the same name and URL in previous data: " + new_tool.name + " !")
+                print(
+                    "Error: at least 2 projects have the same name and URL in previous data: "
+                    + new_tool.name
+                    + " !"
+                )
             update_tool(new_tool, existing_tool)
-            print('  Updated')
+            print("  Updated")
     if good_matches == 0:
         if potential_matches > 0:
-            print("(Warning: Please check duplicates !  May be on GitHub, but the source URL does not link to GitHub.) ")
+            print(
+                "(Warning: Please check duplicates !  May be on GitHub, but the source URL does not link to GitHub.) "
+            )
         return False
     else:
         if potential_matches > 1:

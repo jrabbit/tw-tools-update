@@ -2,10 +2,12 @@
 # List of tools urls to skip, as if they where not in GitHub or other repo.
 #
 
-exclude_url_list = ["https://github.com/BrunoVernay/tw-tools-update",
-                    "https://github.com/BrunoVernay/taskwarrior-site-test",
-                    "https://github.com/BrunoVernay/tw-html-parse",
-                    "https://github.com/pld-linux/bugwarrior"]
+exclude_url_list = [
+    "https://github.com/BrunoVernay/tw-tools-update",
+    "https://github.com/BrunoVernay/taskwarrior-site-test",
+    "https://github.com/BrunoVernay/tw-html-parse",
+    "https://github.com/pld-linux/bugwarrior",
+]
 
 
 def skip_these_tool(url):

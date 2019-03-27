@@ -8,7 +8,7 @@ from repo_github import scan_github_repo
 logger = logging.getLogger(__name__)
 
 # Load previous data
-with open('data-tools-old.json') as f:
+with open("data-tools-old.json") as f:
     tools = json.load(f)
 
 
@@ -25,20 +25,21 @@ scan_github_repo(tools, gh_token)
 
 
 # Write the updated data
-with open('data-tools-full.json', mode='w', encoding='utf-8') as f:
+with open("data-tools-full.json", mode="w", encoding="utf-8") as f:
     json.dump(tools, f, indent=2)
 
 
 def remove_useless_keys(tool):
     try:
-        del tool['readme']
+        del tool["readme"]
     except Exception as e:
         logger.exception(e)
     return tool
+
 
 tools = list(map(remove_useless_keys, tools))
 
 
 # Write the updated data
-with open('data-tools.json', mode='w', encoding='utf-8') as f:
+with open("data-tools.json", mode="w", encoding="utf-8") as f:
     json.dump(tools, f, indent=2)
