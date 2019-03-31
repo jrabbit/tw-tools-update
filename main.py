@@ -1,3 +1,4 @@
+import sys
 import json
 import logging
 
@@ -6,6 +7,10 @@ import toml
 from repo_github import scan_github_repo
 
 logger = logging.getLogger(__name__)
+
+if len(sys.argv) > 1:
+    if sys.argv[1] in ["-d", "--debug"]:
+        logging.basicConfig(level="DEBUG")
 
 logging.basicConfig(level=logging.INFO)
 # Load previous data
