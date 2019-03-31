@@ -1,4 +1,3 @@
-import json
 from datetime import date
 import logging
 import re
@@ -82,9 +81,10 @@ def is_tool_update(new_tool, old_tools: list) -> bool:
         return False
     else:
         if potential_matches > 1:
-            logger.warning("Warning: Please check possible duplicates in previous data !")
+            logger.warning(
+                "Warning: Please check possible duplicates in previous data !"
+            )
         return True
-
 
 
 def scan_github_repo(tools, github_token) -> list:
@@ -106,7 +106,6 @@ def scan_github_repo(tools, github_token) -> list:
 
         # this isn't a free lookup or cached.
         # elif is_tool_update(r, tools):
-            # todo: handle this case
-           # pass
+        # todo: handle this case
+        # pass
     return revised_tools
-    
