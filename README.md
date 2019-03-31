@@ -3,31 +3,25 @@
 ## Description
 
 Use the GitHub-API to update the list of tools and extensions related to TaskWarrior. 
-It will be displayed on the web site: http://taskwarrior.org/tools/
+The end product is the web site: https://taskwarrior.org/tools/
 
 This is linked to the project of future Tool page: http://brunovernay.github.io/taskwarrior-site-test/
+
+## Usage
+
+- run `pipenv sync` in this folder and likely `pipenv shell`
+- `cp config.example.toml config.toml` then run your favorite editor and replace the placeholder with your token.
+- old tool list is in `data-tools-old.json`
+- `pipenv run python main.py > log-$(date -Iminutes).txt` (takes about 5 min)
+- New data is in `data-tools.json`
+
+## Developer Notes
 
 The idea is to use the GitHub-API to search project related to TaskWarrior and update the list of tools displayed on TaskWarrior site from this list.
 
 The project started in Java, but I created a Python branch, as it is more idiomatic to the TaskWarrior community. It should be compatible with Python v2 & v3 (http://pythonclock.org/).
-
+ 
 I use https://github.com/PyGithub/PyGithub , there are [many Python projects addressing GitHub](https://developer.github.com/libraries/#python), even a book [Mining the Social Web](https://www.safaribooksonline.com/library/view/mining-the-social/9781449368180/) .
-
-
-## Usage
-
-- `cp Config.py.example Config.py` and edit `Config.py` with your GitHub token
-- old tool list is in `data-tools-old.json`
-- `python3 Main.py > log-$(date -Iminutes).txt` (takes about 5 min)
-- New data is in `data-tools.json`
-
-## Usage
-
-`python3 Main.py > log-$(date -Iminutes).txt`
-## Usage
-
-`python3 Main.py > log-$(date -Iminutes).txt`
-## Status
 
 
 - It works
@@ -56,12 +50,11 @@ The mapping:
 - last_update updated_at (pushed_at would be more conservative, but would miss commits in non-master branches)
 
 
-## Automatic classification
+### Automatic classification
 
 I get all the "Readme" in order to perform some Machine Learning. The first idea would be to classify by category. The Python library seems to be SciKit. There is a more active [NLTK](http://www.nltk.org/) library, but since I only need simple text feature extraction and no complex Natural Language processing, I will stick to SciKit. 
 Some ref:
  - http://scikit-learn.org/stable/modules/feature_extraction.html
  - http://scikit-learn.org/stable/tutorial/text_analytics/working_with_text_data.html
  - http://scikit-learn.org/stable/auto_examples/model_selection/grid_search_text_feature_extraction.html
- - 
  
