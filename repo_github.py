@@ -48,7 +48,7 @@ def update_tool(new_tool, old_tool):
     best_effort_theme(old_tool)
 
 
-def is_tool_update(new_tool, old_tools):
+def is_tool_update(new_tool, old_tools: list) -> bool:
     """
     Is current result already in the tools?
     :param new_tool: tool from the repository
@@ -86,30 +86,27 @@ def is_tool_update(new_tool, old_tools):
         return True
 
 
-def add_tool(new_tool, old_tools):
-    """
 
-    :param new_tool: tool from the repository
-    :param old_tools: old tool list
-    """
-    t = tool.new_tool(new_tool.name)
-    update_tool(new_tool, t)
-    old_tools.append(t)
-    if logger.isEnabledFor(logging.DEBUG):
-        # json dumps are slow don't do them if not in debug mode
-        logger.debug(json.dumps(t, indent=2))
-
-
-def scan_github_repo(tools, github_token):
+def scan_github_repo(tools, github_token) -> list:
     """
     Main program loop
     :param tools: old tool list
     :param github_token: See GitHub doc.
     """
     gh = Github(login_or_token=github_token, per_page=100)
+    revised_tools = list()
     for i, r in enumerate(gh.search_repositories("taskwarrior"), 1):
         # assert isinstance(r, Repository)
         logger.info("#%d, Name: %s %s", i, r.name, r.html_url)
         if not skip_these_tool(r.html_url) and not is_tool_update(r, tools):
-            add_tool(r, tools)
+            t = tool.new_tool(r.name)
+            t = update_tool(r, t)
+            revised_tools.append(t)
             logger.info("%s  Added", r.name)
+
+        # this isn't a free lookup or cached.
+        # elif is_tool_update(r, tools):
+            # todo: handle this case
+           # pass
+    return revised_tools
+    

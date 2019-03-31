@@ -17,7 +17,7 @@ config = toml.load("config.toml")
 
 gh_token = config["github"]["token"]
 
-scan_github_repo(tools, gh_token)
+revised_tools = scan_github_repo(tools, gh_token)
 # Should scan BitBucket repo ...
 # other repo ...
 
@@ -27,13 +27,13 @@ scan_github_repo(tools, gh_token)
 
 # Write the updated data
 with open("data-tools-full.json", mode="w", encoding="utf-8") as f:
-    json.dump(tools, f, indent=2)
+    json.dump(revised_tools, f, indent=2)
 
 
 def remove_useless_keys(tool):
     try:
         del tool["readme"]
-    except KeyError:
+    except (KeyError, TypeError):
         # supress
         pass
     except Exception as e:
@@ -41,9 +41,10 @@ def remove_useless_keys(tool):
     return tool
 
 
-tools = list(map(remove_useless_keys, tools))
+slim_tools = list(map(remove_useless_keys, revised_tools))
 
 
 # Write the updated data
 with open("data-tools.json", mode="w", encoding="utf-8") as f:
-    json.dump(tools, f, indent=2)
+    json.dump(slim_tools, f, indent=2)
+logger.info("wrote data-tools.json successfully")
