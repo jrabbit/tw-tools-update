@@ -97,7 +97,7 @@ def scan_github_repo(tools: List[Dict[str, Any]], github_token: str, small_run: 
     """
     gh = Github(login_or_token=github_token, per_page=100)
     revised_tools = list()
-    r: Repository #declare type 
+    r: Repository  # declare type
     for i, r in enumerate(gh.search_repositories("taskwarrior"), 1):
         if i > 5 and small_run:
             break

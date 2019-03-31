@@ -10,7 +10,7 @@ exclude_url_list = [
 ]
 
 
-def skip_these_tool(url:str) -> bool:
+def skip_these_tool(url: str) -> bool:
     """
     Some projects that are not relevant to the tool list
     :param url: would be html_url for GitHub, to uniquely distinguish projects

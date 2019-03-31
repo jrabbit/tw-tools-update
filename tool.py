@@ -1,7 +1,8 @@
 from datetime import datetime, date
 from typing import Dict, Any
 
-def new_tool(name:str) -> Dict[str, Any]:
+
+def new_tool(name: str) -> Dict[str, Any]:
     """
     Create a new tool structure, with some pre-filled fields
     :param name:  the tool name
