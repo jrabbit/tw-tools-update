@@ -1,8 +1,10 @@
 from datetime import date
 import logging
 import re
+from typing import List, Dict, Any
 
 from github import Github
+from github.Repository import Repository
 
 import tool
 from skip_these_tools import skip_these_tool
@@ -14,7 +16,7 @@ logger = logging.getLogger(__name__)
 # But the Python library is not able to get it. Wait and see ...
 
 
-def update_tool(new_tool, old_tool):
+def update_tool(new_tool: Repository, old_tool: Dict[str, Any]) -> None:
     """
     Parse Github request to update the data
     :param new_tool: from the GitHub repository
@@ -47,7 +49,7 @@ def update_tool(new_tool, old_tool):
     best_effort_theme(old_tool)
 
 
-def is_tool_update(new_tool, old_tools: list) -> bool:
+def is_tool_update(new_tool: Repository, old_tools: List[Dict[str, Any]]) -> bool:
     """
     Is current result already in the tools?
     :param new_tool: tool from the repository
@@ -87,7 +89,7 @@ def is_tool_update(new_tool, old_tools: list) -> bool:
         return True
 
 
-def scan_github_repo(tools, github_token) -> list:
+def scan_github_repo(tools: List[Dict[str, Any]], github_token: str, small_run: bool) -> List[Dict[str, Any]]:
     """
     Main program loop
     :param tools: old tool list
@@ -95,13 +97,17 @@ def scan_github_repo(tools, github_token) -> list:
     """
     gh = Github(login_or_token=github_token, per_page=100)
     revised_tools = list()
+    r: Repository #declare type 
     for i, r in enumerate(gh.search_repositories("taskwarrior"), 1):
+        if i > 5 and small_run:
+            break
         # assert isinstance(r, Repository)
         logger.info("#%d, Name: %s %s", i, r.name, r.html_url)
         if not skip_these_tool(r.html_url) and not is_tool_update(r, tools):
             t = tool.new_tool(r.name)
-            t = update_tool(r, t)
+            update_tool(r, t)
             revised_tools.append(t)
+            logger.debug("new tool %r", t)
             logger.info("%s  Added", r.name)
 
         # this isn't a free lookup or cached.

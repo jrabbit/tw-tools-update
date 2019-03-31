@@ -1,16 +1,20 @@
-import sys
 import json
+import argparse
 import logging
-
+from typing import Dict, Any
 import toml
 
 from repo_github import scan_github_repo
 
 logger = logging.getLogger(__name__)
+parser = argparse.ArgumentParser()
+parser.add_argument("--debug-all", action="store_true", help="log all possible messages")
+parser.add_argument("--debug-some", action="store_true")
+parser.add_argument("--small-run", action="store_true")
+args = parser.parse_args()
 
-if len(sys.argv) > 1:
-    if sys.argv[1] in ["-d", "--debug"]:
-        logging.basicConfig(level="DEBUG")
+if args.debug_all:
+    logging.basicConfig(level="DEBUG")
 
 logging.basicConfig(level=logging.INFO)
 # Load previous data
@@ -22,7 +26,7 @@ config = toml.load("config.toml")
 
 gh_token = config["github"]["token"]
 
-revised_tools = scan_github_repo(tools, gh_token)
+revised_tools = scan_github_repo(tools, gh_token, args.small_run)
 # Should scan BitBucket repo ...
 # other repo ...
 
@@ -35,7 +39,7 @@ with open("data-tools-full.json", mode="w", encoding="utf-8") as f:
     json.dump(revised_tools, f, indent=2)
 
 
-def remove_useless_keys(tool):
+def remove_useless_keys(tool: Dict[str, Any]) -> Dict[str, Any]:
     try:
         del tool["readme"]
     except (KeyError, TypeError):

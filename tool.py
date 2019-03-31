@@ -1,7 +1,7 @@
 from datetime import datetime, date
+from typing import Dict, Any
 
-
-def new_tool(name):
+def new_tool(name:str) -> Dict[str, Any]:
     """
     Create a new tool structure, with some pre-filled fields
     :param name:  the tool name
@@ -20,7 +20,7 @@ def is_obsolete(last_updated: datetime) -> bool:
     return (date.today() - last_updated.date()).days > 3 * 365
 
 
-def best_effort_theme(res):
+def best_effort_theme(res: Dict[str, Any]) -> None:
     """
     Tries to extract theme info from the description
     MUST be called after the description is set!
